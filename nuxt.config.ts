@@ -6,7 +6,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   ssr: false,
   app: {
-    baseURL: '/katuu/',
+    baseURL: '/Katuu/',
   },
   build: {
     transpile: ['vuetify'],
