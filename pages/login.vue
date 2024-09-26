@@ -43,9 +43,9 @@ const auth:any = useFirebaseAuth()
 const router = useRouter()
 
 const signInWithGoogle = () => {
-  signInWithPopup(auth, new GoogleAuthProvider()).then(() => {
-    router.replace('/')
-  })
+//   signInWithPopup(auth, new GoogleAuthProvider()).then(() => {
+//     router.replace('/')
+//   })
 }
 </script>
 

@@ -1,8 +1,15 @@
 <template>
   <v-container>
     <h1 class="mb-4">History</h1>
-    <div>
+    <div class="">
       Ngày: {{ newDate }} - <span class="text-primary">{{formatCurrency(totalPrice)}}</span>
+      <span class="c-changed">
+        <v-radio-group v-model="changed" @change='handleSort($event)' inline label="Thanh Toán:">
+          <v-radio label="TM + CK" value="TMCK" />
+          <v-radio label="Tiền Mặt" value="TM" />
+          <v-radio label="Chuyển Khoản" value="CK"/>
+        </v-radio-group>
+      </span>
     </div>
     <br>
     <v-card
@@ -62,12 +69,20 @@ import kemtrungchay from '@/assets/images/kemtrungchay.jfif'
 
 import { initializeApp } from 'firebase/app'
 import { useCollection, VueFireFirestoreOptionsAPI, VueFire  } from 'vuefire'
-import { collection, addDoc, serverTimestamp, doc, deleteDoc, getDocs, getFirestore, writeBatch  } from 'firebase/firestore'
+import { collection, addDoc, serverTimestamp, where, doc, deleteDoc, getDocs, getFirestore, query, orderBy  } from 'firebase/firestore'
 
 const db = useFirestore()
-const todos = useCollection(collection(db, 'history'))
+ // Chuyển đổi dateString thành hai timestamp cho đầu và cuối ngày
 
-console.log(todos);
+const changed = ref('TMCK')
+
+const listData:any = ref([])
+
+let yourDate = new Date()
+  yourDate.toISOString().split('T')[0]
+
+// const todos = useCollection(query(collection(db, 'history'), where('createdAt', '>=', yourDate)))
+const todos = useCollection(query(collection(db, 'history'), orderBy('createdAt', 'desc')))
 
 const convertTimestamp = (seconds: any, nanoseconds: any) => {
     // Chuyển đổi giây thành milliseconds
@@ -105,7 +120,7 @@ return `${year}-${month}-${day}`;
 })
 
 const totalPrice = computed(() => {
-  return todos.value.reduce((sum, product) => {
+  return todos.value?.reduce((sum, product) => {
     return (sum + (product.totalPrice || 0));
   }, 0);
 });
@@ -125,6 +140,21 @@ const selectedProductNames = (products: any) => {
   .filter((product: any) => product.isChecked)
   .map((product: any) => product.name)
   .join(', ');
+}
+
+const handleSort = (event: Event) => {
+  // const type = event.target.value
+  // let tmp;
+  // if(type === 'CK') {
+  //   tmp = useCollection(query(collection(db, 'history'), where('changed', '==', 'CK'), orderBy('createdAt', 'desc')))
+  // } else if(type === 'TM') {
+  //   tmp = useCollection(query(collection(db, 'history'), where('changed', '==', 'TM'), orderBy('createdAt', 'desc')))
+  // } else {
+  //   tmp = useCollection(query(collection(db, 'history'), orderBy('createdAt', 'desc')))
+  // }
+  // console.log(tmp);
+  // todos.value = JSON.parse(JSON.stringify(tmp))
+  
 }
 
 </script>

@@ -267,10 +267,12 @@ const handleSubmit = async () => {
     }
   })  
 
+  let yourDate = new Date()
+  yourDate.toISOString().split('T')[0]
   let item: any = {
     name: infoModal.value.name,
     comment: comment.value,
-    time: serverTimestamp(),
+    time: yourDate,
     price: parseInt(price.value)
   }
 

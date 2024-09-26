@@ -2,15 +2,15 @@
   <slot/>
   <v-layout class="overflow-visible" style="height: 56px;">
     <v-bottom-navigation
-      v-model="value"
+      v-model="index"
       color="primary"
       grow
     >
-      <v-btn :value="1" @click="handlePage('/')">
+      <v-btn :value="1" @click="handlePage('/', 1)">
         <v-icon>mdi-home</v-icon>
       </v-btn>
 
-      <v-btn :value="2" @click="handlePage('/cart')">
+      <v-btn :value="2" @click="handlePage('/cart', 2)">
         <!-- <div class="position-relative">
           <v-icon>mdi-cart</v-icon>
           <div class="quanlity">1</div>
@@ -24,26 +24,29 @@
       </v-btn>
       
 
-      <v-btn :value="3" @click="handlePage('/history')">
+      <v-btn :value="3" @click="handlePage('/history', 3)">
         <v-icon>mdi-history</v-icon>
       </v-btn>
 
-      <v-btn :value="4" @click="handleLogout">
+      <!-- <v-btn :value="4" @click="handleLogout">
         <v-icon>mdi-logout</v-icon>
 
-      </v-btn>
+      </v-btn> -->
     </v-bottom-navigation>
   </v-layout>
 </template>
 
 <script setup lang="ts">
 import {signOut} from 'firebase/auth'
-const value = ref(1)
+import { useIndex } from '~/store';
 const router = useRouter()
 
-const handlePage = (page: string) => {
-  console.log('1232', page);
+const store = useIndex()
+const {index} = storeToRefs(store)
+
+const handlePage = (page: string, number: number) => {
   router.push(page)
+  store.updateIndex(number)
 }
 
 const auth:any = useFirebaseAuth()

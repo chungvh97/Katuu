@@ -45,11 +45,23 @@
         </div>
       </v-card-item>
     </v-card>
+
+    <v-card class="mt-4 c-changed">
+      <v-card-item>
+        <v-radio-group v-model="changed" inline label="Thanh Toán:">
+          <v-radio label="Tiền Mặt" value="TM" />
+          <v-radio label="Chuyển Khoản" value="CK"/>
+        </v-radio-group>
+      </v-card-item>
+    </v-card>
+
+    
+
     <v-btn
       class="mt-4"
       color="primary"
       block
-      @click="addProducts"
+      @click="todos.length === 0 ? null : addProducts()"
     >
       Mua
     </v-btn>
@@ -65,21 +77,30 @@ import kemtrungchay from '@/assets/images/kemtrungchay.jfif'
 
 import { initializeApp } from 'firebase/app'
 import { useCollection, VueFireFirestoreOptionsAPI, VueFire  } from 'vuefire'
-import { collection, addDoc, serverTimestamp, doc, deleteDoc, getDocs, getFirestore, writeBatch  } from 'firebase/firestore'
+import { collection, addDoc, query, orderBy, serverTimestamp, doc, deleteDoc, getDocs, getFirestore, writeBatch  } from 'firebase/firestore'
+import { useIndex } from '~/store'
 
 const db = useFirestore()
-const todos = useCollection(collection(db, 'products'))
+const todos = useCollection(query(collection(db, 'products'), orderBy('createdAt', 'desc')))
 
+const store = useIndex()
 const totalPrice = computed(() => {
   return todos.value.reduce((sum, product) => {
     let price = (product.quantity ? (product.price * product.quantity) : product.price)
-    console.log(sum, product);
-    
     return (sum + (price || 0));
   }, 0);
 });
+const router = useRouter()
+
+// onMounted(() => {
+//   if (todos.value.length === 0) {
+//     router.push('/')
+//     store.updateIndex(1)
+//   }
+// })
 
 const refModal = ref()
+const changed = ref('TM')
 
 const handleCard = async (item: any) => {
   await refModal.value.showModal(item)
@@ -97,17 +118,22 @@ const selectedProductNames = (products: any) => {
 }
 
 const addProducts = async () => {
+  let yourDate = new Date()
+  yourDate.toISOString().split('T')[0]
+
   const items = {
     data: todos.value.map((sum, product) => {
       return sum;
     }),
     totalPrice: totalPrice.value,
-    createdAt: new Date(),
+    createdAt: yourDate,
+    changed: changed.value
   }
-  
   // ✨ add a new todo
   await addDoc(collection(db, "history"), items).then(() => {
     deleteAllDocuments("products")
+    changed.value = 'TM'
+    router.push('/')
   })
 }
 const firebaseApp = initializeApp({
@@ -140,4 +166,3 @@ const deleteAllDocuments = async (collectionName: any) => {
   }
 }
 </script>
-

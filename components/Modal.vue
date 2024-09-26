@@ -211,13 +211,15 @@ const handleSubmit = async () => {
       newTopping.push(ele[1])
     }
   })  
+  let yourDate = new Date()
+  yourDate.toISOString().split('T')[0]
   const item = {
     name: infoModal.value.name,
     quantity: quantity.value,
     comment: comment.value,
     size: infoModal.value.size,
     topping: JSON.stringify(newTopping),
-    createdAt: serverTimestamp(),
+    createdAt: yourDate,
     price: price.value
   }
 
