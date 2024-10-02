@@ -183,6 +183,11 @@ const topping:any = ref({
     isChecked: false
   },
   17: {
+    name: 'Hạt thủy tinh',
+    price: 5000,
+    isChecked: false
+  },
+  18: {
     name: 'Full topping',
     price: 10000,
     isChecked: false
